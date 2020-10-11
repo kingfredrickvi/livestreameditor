@@ -82,7 +82,7 @@ export class StreamComponent implements OnInit {
     console.log("Times", this.segmentTimes);
   }
 
-  coolVideo(video) {
+  coolVideo() {
     if (confirm("Are you sure you would like to cool the video?")) {
       this.videoService.coolVideo(this.streamId).subscribe((data: any) => {
         // video.cold_storage = 1;

@@ -11,9 +11,9 @@ export class SettingsComponent implements OnInit {
 
   constructor(private userService: UserService, private streamersService: StreamersService) { }
 
-  private userData = [];
-  private servers = [];
-  private activeServer;
+  public userData: any = [];
+  public servers: any = [];
+  public activeServer: any;
   
   ngOnInit() {
     

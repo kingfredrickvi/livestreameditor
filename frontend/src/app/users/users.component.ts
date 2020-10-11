@@ -33,7 +33,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  updateStreamerGroup(user, newGroups) {
+  updateStreamerGroup(user) {
     this.userService.updateUser({id: user.uid, streamer_groups: user.streamer_groups}).subscribe((data: any) => {
       console.log(data);
     });
