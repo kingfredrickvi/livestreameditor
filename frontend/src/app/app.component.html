@@ -1,0 +1,37 @@
+
+<header>
+  <div class="left">
+    <a routerLink="/">Livestream Editor</a> <span>BETA v9</span>
+  </div>
+  <div class="right">
+    <ul *ngIf="userData.username" class="navbar">
+      <li (click)="close()"><a routerLink="/streams">Videos</a></li>
+      <li *ngIf="userData.group > 0">
+        <span (click)="toggleAdmin()">Admin</span>
+        <ul class="subnavbar" [ngClass]="{'subnavbar-open': showAdmin}">
+          <li (click)="close()" *ngIf="userData.group > 0"><a routerLink="/artifacts">Artifacts</a></li>
+          <li (click)="close()" *ngIf="userData.group > 0"><a routerLink="/streamers">Streamers</a></li>
+          <li (click)="close()" *ngIf="userData.group > 1"><a routerLink="/users">Users</a></li>
+        </ul>
+      </li>
+      <li>
+        <span (click)="toggleAccount()">Account</span>
+        <ul class="subnavbar" [ngClass]="{'subnavbar-open': showAccount}">
+          <li (click)="close()"><a routerLink="/settings">Settings</a></li>
+          <li (click)="close()"><a routerLink="/logout">Log out</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul *ngIf="!userData.username">
+      <li><a routerLink="/login">Log in</a></li>
+    </ul>
+  </div>
+</header>
+
+<main (click)="close()">
+  <router-outlet></router-outlet>
+</main>
+
+<footer>
+  Livestream Editor &copy; 2020
+</footer>

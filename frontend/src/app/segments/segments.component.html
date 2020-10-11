@@ -1,0 +1,72 @@
+
+<div class="segment-container">
+    <div class="segment-header"><p>Segments</p><p>{{ segmentTimes | minuteSeconds }}</p></div>
+    <ul class="segment-controls">
+        <button (click)="tab = 0" [ngClass]="{'active': tab == 0}">Mine</button>
+        <button (click)="tab = 1" [ngClass]="{'active': tab == 1}">All</button>
+    </ul>
+    <ul class="segments">
+        <ng-container *ngFor="let segment of segments">
+            <li *ngIf="tab == 1 || (tab == 0 && segment && segment.user_uid == userData.user_uid)" [ngClass]="{'active': segment.uid === selectedSegment.uid}">
+                <h2>{{ segment.username }}</h2>
+                <div class="segment-image">
+                    <img src="{{staticUrl}}/timeline/{{streamId}}/{{ (segment.start+1) | floor }}.jpg">
+                    <div class="segment-thumbnail-time">
+                        {{ segment.end - segment.start | minuteSeconds }}
+                    </div>
+                </div>
+                <div class="segment-cut">
+                    <div>Start</div>
+                    <div>End</div>
+                </div>
+                <div class="segment-cut">
+                    <div>{{ segment.start | number : '1.2-2' }}</div>
+                    <div>{{ segment.end | number : '1.2-2' }}</div>
+                </div>
+                <div class="segment-buttons">
+                    <div>
+                        <button (click)="viewSegment(segment)" *ngIf="segment.uid !== selectedSegment.uid">
+                            View
+                        </button>
+                        <button (click)="viewSegment({empty: true})" *ngIf="segment.uid === selectedSegment.uid">
+                            Close
+                        </button>
+                        <button (click)="viewSegment(segment, true)">
+                            <i class="fa fa-play"></i>
+                        </button>
+                    </div>
+                    <div class="segment-votes">
+                        <p>0 <i class="fa fa-thumbs-up"></i></p>
+                    </div>
+                    <div class="segment-approved">
+                        <div *ngIf="segment.status == 0">
+                            <i class="fa fa-minus-square"></i>
+                        </div>
+                        <div *ngIf="segment.status == 1">
+                            <i class="fa fa-times"></i>
+                        </div>
+                        <div *ngIf="segment.status == 2">
+                            <i class="fa fa-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="segment-buttons">
+                    <div class="smaller">
+                        <button *ngIf="segment.user_uid === userData.user_uid || userData.group > 0" (click)="delete(segment)">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                        <button *ngIf="userData.group > 0 && segment.status !== 0" (click)="unknown(segment)">
+                            <i class="fa fa-minus-square"></i>
+                        </button>
+                        <button *ngIf="userData.group > 0 && segment.status !== 1" (click)="approve(segment)">
+                            <i class="fa fa-times"></i>
+                        </button>
+                        <button *ngIf="userData.group > 0 && segment.status !== 2" (click)="decline(segment)">
+                            <i class="fa fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+            </li>
+        </ng-container>
+    </ul>
+</div>

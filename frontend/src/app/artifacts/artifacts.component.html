@@ -1,0 +1,39 @@
+
+<div>
+    <div class="header">
+        <h2>Artifacts</h2>
+        <div>
+            <button (click)="refresh()"><i class="fa fa-undo"></i></button>
+        </div>
+    </div>
+    <ul>
+        <li *ngFor="let artifact of artifacts">
+            <div class="streamer-box">
+                <div class="video-thumbnail">
+                    <img src="{{staticUrl}}/timeline/{{artifact.video_uid}}/0.jpg">
+                    <div class="video-thumbnail-time" *ngIf="artifact.duration > 0">
+                        {{ artifact.duration | minuteSeconds }}
+                    </div>
+                </div>
+                <div class="streamer-info">
+                    <p>
+                        {{ artifact.title }}
+                    </p>
+                    <p *ngIf="artifact.progress == 1">
+                        <a href="{{staticUrl}}/artifacts/{{artifact.uid}}.mp4" target="_blank">{{staticUrl}}/artifacts/{{artifact.uid}}.mp4</a>
+                    </p>
+                    <p *ngIf="artifact.progress == 0">
+                        Processing...
+                    </p>
+                    <p *ngIf="artifact.progress < 0">
+                        Failed
+                    </p>
+                    <textarea *ngIf="artifact.description">{{ artifact.description }}</textarea>
+                </div>
+                <button *ngIf="artifact.progress == -10" class="streamer-upload" (click)="upload(artifact)">
+                    <i class="fa fa-youtube-play"></i> Upload
+                </button>
+            </div>
+        </li>
+    </ul>
+</div>

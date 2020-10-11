@@ -1,0 +1,146 @@
+
+.stream-container {
+    display: flex;
+}
+
+h1 {
+    padding: 0 0 15px 0;
+    font-weight: normal;
+    font-size: 20px;
+}
+
+.stream-main p {
+    line-height: 150%;
+    padding: 10px 0;
+}
+
+.cold-storage {
+    background: #2F3136;
+    color: white;
+    text-align: center;
+    padding: 5px 15px;
+    cursor: pointer;
+    margin: 20px 0 5px;
+    font-size: 16px;
+    border: 1px solid #333;
+    border-radius: 5px;
+}
+
+.cold-storage-img {
+    margin: 0 auto;
+    text-align: center;
+}
+
+.cold-storage-img img {
+    max-width: 100%;
+}
+
+.cold-storage-img .loading {
+    max-width: 100px;
+}
+
+.stream-main {
+    flex-grow: 1;
+    flex-shrink: 1;
+    border: 1px solid #555555;
+    border-radius: 7px;
+    background: #212121;
+    padding: 15px;
+    color: #B9BBBE;
+}
+
+.stream-sidebar {
+    width: 300px;
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+vg-player {
+    height: auto;
+    text-align: center;
+}
+
+vg-player video {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+vg-time-display {
+    padding: 0 10px;
+}
+
+vg-volume {
+    padding: 0 10px;
+}
+
+.segment-approved {
+    padding: 5px;
+    font-size: 18px;
+}
+
+.fa-times {
+    color: #e74c3c;
+}
+
+.fa-times {
+    color: #e74c3c;
+}
+
+.fa-check {
+    color: #2ecc71;
+}
+
+@media (max-height: 800px) {
+    vg-player video {
+        max-height: 300px;
+    } 
+}
+
+.extra-padding {
+    padding: 10px 0 0;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.controls button {
+    background: #2F3136;
+    color: white;
+    text-align: center;
+    padding: 5px 15px;
+    cursor: pointer;
+    margin: 5px;
+    font-size: 16px;
+    border: 1px solid #555555;
+    border-radius: 5px;
+}
+
+.controls .active {
+    background: #555555;
+}
+
+.timeline {
+    width: 100%;
+    height: 150px;
+    padding: 10px 0 2px;
+}
+
+canvas {
+    background: #333333;
+    width: 100%;
+    height: 100%;
+}
+
+@media (max-width: 820px) {
+    .stream-container {
+        flex-direction: column;
+    }
+
+    .stream-sidebar {
+        width: 100%;
+    }
+}

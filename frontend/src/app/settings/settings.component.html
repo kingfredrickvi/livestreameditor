@@ -1,0 +1,24 @@
+
+<div>
+    <div class="header">
+        <h2>Settings</h2>
+        <div>
+        </div>
+    </div>
+    <ul>
+        <li *ngFor="let user of userData">
+            <div class="streamer-box">
+                <div class="streamer-info">
+                    <p>
+                        <label>Media Server</label>
+                        <select [(ngModel)]="activeServer" (change)="updateActiveServer()">
+                            <ng-container *ngFor="let server of servers">
+                                <option value="{{server.uid}}" *ngIf="+server.active">{{server.uid}}</option>
+                            </ng-container>
+                        </select>
+                    </p>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>

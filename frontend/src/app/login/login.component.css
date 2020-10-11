@@ -1,0 +1,73 @@
+
+.login {
+    border-radius: 10px;
+    background: white;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 20px;
+    padding: 0 0 15px 0;
+}
+
+fieldset {
+    display: flex;
+    flex-direction: row;
+}
+
+label {
+    display: block;
+    padding: 15px 0 5px;
+}
+
+input {
+    width: 100%;
+    padding: 5px 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid #aaaaaa;
+    box-sizing: border-box;
+}
+
+.form-submit {
+    display: flex;
+    justify-content: flex-end;
+}
+
+button {
+    margin: 15px 0 0;
+    padding: 10px 15px;
+    font-size: 14px;
+    color: white;
+    border-radius: 5px;
+    border: 1px solid #aaaaaa;
+    display: block;
+    cursor: pointer;
+}
+
+.error h2 {
+    font-size: 20px;
+    font-weight: normal;
+    padding: 0 0 10px 0;
+}
+
+.error {
+    color: white;
+    background: #e74c3c;
+    padding: 10px;
+    border-radius: 10px;
+    line-height: 150%;
+}
+
+.twitch {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.twitch button {
+    background: #6441A5;
+}

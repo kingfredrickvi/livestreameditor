@@ -1,0 +1,114 @@
+
+.main {
+    max-width: 968px;
+    margin: 0 auto;
+}
+
+.main .header {
+    display: relative;
+    position: relative; 
+    height: 325px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main .header::before {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0) 59%, rgba(0, 0, 0, 0.0) 100%), url("https://livestreameditor.com/static/mypeas.jpg");
+    background-size: cover;
+    content: "";
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    border-radius: 10px;
+    opacity: 0.20;
+}
+
+.header-text {
+    padding: 20px 60px;
+    text-align: center;
+    font-size: 70px;
+    opacity: 1;
+    position: relative;
+    color: #B9BBBE;
+    background: rgba(33, 33, 33, 0.70);
+    border-radius: 10px;
+    margin: 0 10px;
+    max-width: 100%;
+    border: 3px solid #777777;
+}
+
+.header-text span {
+    display: block;
+    font-size: 24px;
+    padding: 20px 0 0;
+    line-height: 125%;
+}
+
+.main b {
+    font-weight: bold;
+}
+
+@media (max-width: 750px) {
+    .header-text {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 650px) {
+    .header-text {
+        font-size: 28px;
+    }
+
+    .main .header::before {
+        background-size:  100% 100%;
+    }
+}
+
+.block1 {
+    padding: 20px;
+    margin: 20px 0 20px;
+    border-radius: 5px;
+    background: #2F3136;
+    border: 1px solid #555555;
+    color: #B9BBBE;
+    font-size: 20px;
+    line-height: 150%;
+}
+
+.block1 p {
+    padding: 0 0 20px;
+}
+
+.block2 img {
+    box-sizing: border-box;
+    max-height: 100%;
+    max-width: 100%;
+    text-align: center;
+}
+
+.block2, .block3 {
+    text-align: center;
+}
+
+.block3 img {
+    max-height: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.block1 h2 {
+    font-weight: bold;
+    padding: 0 0 10px 0;
+    color: white;
+    text-align: left;
+}
+
+.block1 ol {
+    list-style: decimal;
+    margin: 0 0 20px 40px;
+}

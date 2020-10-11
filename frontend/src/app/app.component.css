@@ -1,0 +1,108 @@
+
+header {
+    background: #202225;
+    padding: 20px;
+    touch-action: manipulation;
+    font-size: 20px;
+}
+
+main {
+    padding: 20px;
+    background: #36393F;
+    touch-action: manipulation;
+}
+
+footer {
+    background: #2F3136;
+    color: #72767D;
+    padding: 20px;
+    font-size: 16px;
+    text-align: center;
+    touch-action: manipulation;
+}
+
+header a {
+    text-decoration: none;
+    color: #B9BBBE;
+    cursor: pointer;
+}
+
+header .navbar {
+    display: flex;
+}
+
+header .navbar > li {
+    padding: 0 0 0 20px;
+    position: relative;
+}
+
+header .navbar > li > span {
+    color: #B9BBBE;
+    cursor: pointer;
+}
+
+header .subnavbar {
+    display: none;
+    position: absolute;
+    margin: 20px 0 0;
+    padding: 10px;
+    box-sizing: border-box;
+    right: 0;
+    background: #202225;
+    border: 1px solid #666666;
+    min-width: 130px;
+    z-index: 100000;
+}
+
+header .subnavbar-open {
+    display: block;
+}
+
+header .subnavbar li {
+    padding: 10px 5px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+}
+
+.left span {
+    padding: 5px;
+    font-size: 10px;
+    background: #2F3136;
+    color: white;
+    margin: 0 0 0 7px;
+    border-radius: 3px;
+}
+
+@media (max-width: 730px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    header ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    header .right li {
+        padding: 5px 10px;
+    }
+
+    header .left {
+        padding: 0 0 10px 0;
+    }
+}
+
+@media (max-width: 300px) {
+    header .left span {
+        display: none;
+    }
+}

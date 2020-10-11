@@ -1,0 +1,6 @@
+static/
+__pycache__/
+*.pyc
+youtube-upload/
+app.db
+.env

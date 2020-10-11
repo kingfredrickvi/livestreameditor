@@ -1,0 +1,64 @@
+
+<div class="restricted" *ngIf="restricted">
+    You do not have permission to view this page, or something went wrong. Please email editors@livestreameditor.com to request permission or message the right person on Discord.
+</div>
+<div class="search-box" *ngIf="!restricted">
+    <div class="search">
+        <label for="search-box">Search</label>
+        <input name="search" id="search-box" [(ngModel)]="search" (ngModelChange)="updateSearch()">
+    </div>
+    <div>
+        <select name="streamer-filter" [(ngModel)]="streamerFilter" (ngModelChange)="updateFilter()">
+            <option></option>
+            <ng-container *ngFor="let streamer of streamers">
+                <option value="{{ streamer.username }}">
+                    {{ streamer.username }}
+                </option>
+            </ng-container>
+        </select>
+    </div>
+</div>
+
+<div class="videos">
+    <ng-container *ngFor="let video of filteredVideos">
+        <button class="video" [routerLink]="['/stream', video.uid]" [ngClass]="{'green_outline': video.generated_artifact == 1}">
+            <div class="video-header">
+                <div class="video-pfp">
+                    <img src="{{video.pfp}}">
+                </div>
+                <div class="video-username">
+                    <h2>{{video.username}}</h2>
+                </div>
+            </div>
+            <div class="video-name">
+                {{video.title}}
+            </div>
+            <div class="video-name cold" *ngIf="video.cold_storage == 1">
+                In Cold Storage
+            </div>
+            <div class="video-name cold" *ngIf="video.cold_storage == 2">
+                Warming up...
+            </div>
+            <div class="video-thumbnail" *ngIf="video.progress == 1">
+                <img src="{{staticUrl}}/timeline/{{ video.uid }}/0.jpg">
+                <div class="video-thumbnail-time">
+                    {{ video.duration | minuteSeconds }}
+                </div>
+            </div>
+            <div class="video-thumbnail" *ngIf="video.progress == 0">
+                <img src="{{staticUrl}}/thumb_processing.jpg">
+            </div>
+            <div class="video-thumbnail" *ngIf="video.progress == -1">
+                <img src="{{staticUrl}}/thumb_failed.jpg">
+            </div>
+            <div class="video-date">
+                <div>
+                    {{ video.timestamp * 1000 | date: 'MM-dd-yyyy hh:mm:ss' }} UTC
+                </div>
+            </div>
+        </button>
+    </ng-container>
+</div>
+<div class="load-more" (click)="loadMore()" *ngIf="moreToLoad">
+    <button>Load More</button>
+</div>

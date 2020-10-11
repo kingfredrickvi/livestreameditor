@@ -1,0 +1,98 @@
+
+<div>
+    <div class="header">
+        <h2>Streamers</h2>
+        <div>
+            <button (click)="openEdit()"><i class="fa fa-plus"></i></button>
+        </div>
+    </div>
+    <ul>
+        <li *ngFor="let streamer of streamers">
+            <div class="streamer-container">
+                <div class="streamer-box">
+                    <img src="{{ streamer.pfp }}">
+                    <div class="streamer-info">
+                        <p>
+                            <select [(ngModel)]="streamer.streamer_group" (change)="updateGroup(streamer, $event.target.value)">
+                                <ng-container *ngFor="let group of streamerGroups">
+                                    <option value="{{group.uid}}">{{group.name}}</option>
+                                </ng-container>
+                            </select>
+                            ({{ streamer.platform }})
+                            {{ streamer.username }}
+                            <span *ngIf="streamer.active === '0'">[Deactivated]</span>
+                        </p>
+                        <p><a href="{{ streamer.direct_link }}" target="_blank">{{ streamer.direct_link }}</a></p>
+                    </div>
+                </div>
+                <div class="streamer-edit">
+                    <button (click)="edit(streamer)"><i class="fa fa-pencil"></i></button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div class="popup" *ngIf="addOpen">
+    <h2>Add Streamer</h2>
+    <div class="popup-main">
+        <form>
+            <fieldset>
+                <label for="username">Username</label>
+                <input [(ngModel)]="add.username" type="text" name="username" id="username">
+            </fieldset>
+            <fieldset>
+                <label for="direct_link">Direct Link</label>
+                <input [(ngModel)]="add.direct_link" type="text" name="direct_link" id="direct_link">
+            </fieldset>
+            <fieldset>
+                <label for="profile_picture">Profile Picture</label>
+                <input [(ngModel)]="add.pfp" type="text" name="profile_picture" id="profile_picture">
+            </fieldset>
+            <fieldset for="platform">
+                <label>Platform</label>
+                <input [(ngModel)]="add.platform" type="text" name="platform" id="platform">
+            </fieldset>
+            <fieldset for="platform_username">
+                <label>Platform Username</label>
+                <input [(ngModel)]="add.platform_username" type="text" name="platform_username" id="platform_username">
+            </fieldset>
+            <fieldset for="width">
+                <label>Width</label>
+                <input [(ngModel)]="add.width" type="text" name="width" id="width">
+            </fieldset>
+            <fieldset for="end_card">
+                <label>End Card URL</label>
+                <input [(ngModel)]="add.end_card" type="text" name="end_card" id="end_card">
+            </fieldset>
+            <fieldset for="thumbnail">
+                <label>Thumbnail Template URL</label>
+                <input [(ngModel)]="add.thumbnail" type="text" name="thumbnail" id="thumbnail">
+            </fieldset>
+            <fieldset for="crf">
+                <label>CRF</label>
+                <input [(ngModel)]="add.crf" type="text" name="crf" id="crf">
+            </fieldset>
+            <fieldset for="active">
+                <label>active</label>
+                <input [(ngModel)]="add.active" type="text" name="active" id="active">
+            </fieldset>
+            <fieldset>
+                <label for="streamer_group">Streamer Group</label>
+                <select name="streamer_group" id="streamer_group" [(ngModel)]="add.streamer_group">
+                    <ng-container *ngFor="let group of streamerGroups">
+                        <option value="{{group.uid}}">{{group.name}}</option>
+                    </ng-container>
+                </select>
+            </fieldset>
+            <fieldset class="popup-submit">
+                <button (click)="addOpen = false">
+                    Close
+                </button>
+                <button (click)="addStreamer()">
+                    Submit
+                </button>
+            </fieldset>
+        </form>
+    </div>
+</div>

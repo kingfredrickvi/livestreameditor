@@ -1,0 +1,174 @@
+<div class="stream-container">
+    <div *ngIf="video.cold_storage == 1" class="stream-main">
+        <h1>Cold Storage</h1>
+        <p>
+            This video is currently in cold storage due to inactivity. Please click the button below to bring it out of cold storage.
+        </p>
+        <p>
+            <button (click)="warmVideo(video)" class="cold-storage">Warm Up</button>
+        </p>
+        <p class="cold-storage-img">
+            <img src="{{staticUrl}}/cold_storage.jpg">
+        </p>
+    </div>
+    <div *ngIf="video.cold_storage == 2" class="stream-main">
+        <h1>Cold Storage</h1>
+        <p class="cold-storage-img">
+            <img src="{{staticUrl}}/loading.gif" class="loading">
+        </p>
+        <p>
+            Please wait while video is warmed up...
+        </p>
+    </div>
+    <div *ngIf="video.cold_storage == 0" class="stream-main">
+        <h1>{{video.title}}</h1>
+        <vg-player (onPlayerReady)="onPlayerReady($event)" *ngIf="video.progress >= 1">
+            <vg-controls>
+                <vg-time-display vgProperty="current" vgFormat="hh:mm:ss"></vg-time-display>
+        
+                <vg-scrub-bar>
+                    <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+                    <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+                </vg-scrub-bar>
+        
+                <vg-time-display vgProperty="total" vgFormat="hh:mm:ss"></vg-time-display>
+        
+                <vg-mute></vg-mute>
+                <vg-volume></vg-volume>
+
+                <vg-playback-button [playbackValues]="[ '1.0', '1.5', '2.0', '3.0' ]"></vg-playback-button>
+            </vg-controls>
+        
+            <video [src]="video.src" poster="{{staticUrl}}/timeline/{{ video.uid }}/0.jpg" #media [vgMedia]="media" id="singleVideo" preload="auto" crossorigin></video>
+        </vg-player>
+
+        <div class="controls extra-padding">
+            <button>
+                Time: {{api.currentTime | number : '1.2-2'}}
+            </button>
+            <button>
+                Start: {{data.cutLeft | number : '1.2-2'}}
+            </button>
+            <button>
+                End: {{data.cutRight | number : '1.2-2'}}
+            </button>
+        </div>
+
+        <div class="controls">
+            <button (click)="deltaSeek(-45)">
+                <i class="fa fa-backward"></i>
+                <i class="fa fa-backward"></i>
+            </button>
+            
+            <button (click)="deltaSeek(-0.10)">
+                <i class="fa fa-backward"></i>
+            </button>
+            
+            <button (click)="stopVideo()">
+                <i class="fa fa-stop"></i>
+            </button>
+            
+            <button (click)="pauseVideo()" [ngClass]="{'active': data.isPaused}">
+                <i class="fa fa-pause"></i>
+            </button>
+            
+            <button (click)="playVideo()" [ngClass]="{'active': data.isPlaying}">
+                <i class="fa fa-play"></i>
+            </button>
+            
+            <button (click)="deltaSeek(0.10)">
+                <i class="fa fa-forward"></i>
+            </button>
+            
+            <button (click)="deltaSeek(45)">
+                <i class="fa fa-forward"></i>
+                <i class="fa fa-forward"></i>
+            </button>
+        </div>
+
+        <div class="controls">
+            <button (click)="cutLeft()" [ngClass]="{'active': data.cutLeft > -1}">
+                <i class="fa fa-cut"></i>
+            </button>
+            <button (click)="goCutLeft()">
+                <i class="fa fa-step-backward"></i>
+            </button>
+            <button (click)="goCutRight()">
+                <i class="fa fa-step-forward"></i>
+            </button>
+            <button (click)="cutRight()" [ngClass]="{'active': data.cutRight > -1}">
+                <i class="fa fa-cut"></i>
+            </button>
+            <button (click)="toggleCutStop()" [ngClass]="{'active': data.cutStop}">
+                <i class="fa fa-share-square-o"></i>
+            </button>
+
+            <button *ngIf="selectedSegment.uid && (userData.user_id === selectedSegment.user_id || userData.group > 0)" (click)="saveCut()">
+                <i class="fa fa-save"></i>
+            </button>
+            <button *ngIf="!selectedSegment.uid || (userData.user_id !== selectedSegment.user_id)" (click)="addCut()">
+                <i class="fa fa-plus"></i>
+            </button>
+
+            <ng-container *ngIf="selectedSegment.uid">
+                <div class="segment-approved">
+                    <div *ngIf="selectedSegment.status == 0">
+                        <i class="fa fa-minus-square"></i>
+                    </div>
+                    <div *ngIf="selectedSegment.status == 1">
+                        <i class="fa fa-times"></i>
+                    </div>
+                    <div *ngIf="selectedSegment.status == 2">
+                        <i class="fa fa-check"></i>
+                    </div>
+                </div>
+    
+                <button *ngIf="userData.group > 0 && selectedSegment.status !== 0" (click)="unknown(selectedSegment)">
+                    <i class="fa fa-minus-square"></i>
+                </button>
+                <button *ngIf="userData.group > 0 && selectedSegment.status !== 1" (click)="approve(selectedSegment)">
+                    <i class="fa fa-times"></i>
+                </button>
+                <button *ngIf="userData.group > 0 && selectedSegment.status !== 2" (click)="decline(selectedSegment)">
+                    <i class="fa fa-check"></i>
+                </button>
+            </ng-container>
+        </div>
+
+        <div class="timeline" #timelineDiv (window:resize)="onResize()">
+            <canvas #timeline width="600" height="200">
+            </canvas>
+        </div>
+
+        <div class="controls extra-padding">
+            <button (click)="coolVideo()" *ngIf="userData.group > 0">
+                <i class="fa fa-thermometer-empty"></i>
+            </button>
+            <button (click)="setThumbnail()" *ngIf="userData.group > 0">
+                <i class="fa fa-film"></i>
+            </button>
+            <button (click)="export()" *ngIf="userData.group > 0">
+                <i class="fa fa-download"></i>
+            </button>
+            <div>
+                <button (click)="zoom(-5)">
+                    <i class="fa fa-minus"></i>
+                </button>
+                <button (click)="zoom(5)">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </div>
+            <div>
+                <button (click)="data.autoplay = !data.autoplay" [ngClass]="{'active': data.autoplay}">
+                    <i class="fa fa-step-forward"></i>
+                </button>
+                <button (click)="data.autoplayPending = !data.autoplayPending" [ngClass]="{'active': data.autoplayPending}">
+                    <i class="fa fa-minus-square"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="stream-sidebar" *ngIf="video.cold_storage == 0">
+        <app-segments [segments]="segments" [segmentTimes]="segmentTimes"></app-segments>
+    </div>
+</div>
