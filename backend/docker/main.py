@@ -136,7 +136,7 @@ def do_render(vid, uid):
         artifact["substep"] = str(1)
         artifact_table.put_item(Item=artifact)
 
-        if int(video["thumbnail_time"]) > 0:
+        if float(video["thumbnail_time"]) > 0:
             ffmpeg_output = grab_frame(vid, "raw_files", video["thumbnail_time"])
             print("S3", b2_client.meta.client.upload_file("./static/timeline/{}/0.jpg".format(vid), B2_BUCKET, "thumbs/{}.jpg".format(vid)))
             cuid = uuid()

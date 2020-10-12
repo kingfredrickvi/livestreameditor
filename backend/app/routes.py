@@ -1025,6 +1025,7 @@ def render_video(vid):
     }
 
     emit_database_update("artifacts", artifact)
+    emit_database_update("videos", video)
 
     download_queue.send_message(MessageBody=json.dumps({
         "vid": vid,
