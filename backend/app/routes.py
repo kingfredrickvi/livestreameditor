@@ -25,7 +25,7 @@ b2_resource = boto3.resource('s3',
     aws_access_key_id = Settings.B2_KEY_ID,
     aws_secret_access_key = Settings.B2_ACCESS_KEY
 )
-b2_client = boto3.resource('s3',
+b2_client = boto3.client('s3',
     endpoint_url = Settings.B2_URL,
     aws_access_key_id = Settings.B2_KEY_ID,
     aws_secret_access_key = Settings.B2_ACCESS_KEY

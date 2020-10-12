@@ -50,6 +50,6 @@ b2_client = boto3.resource('s3',
 )
 
 b2_client.meta.client.upload_file("dist/{}.zip".format(build_uid), B2_BUCKET, "builds/{}.zip".format(build_uid))
-sns.publish(TopicArn=SNS_DATABASE_TOPIC_ARN, Message=json.dumps({"commands": {build_uid: {"update_build": "https://livestreameditorbuilds234.s3.us-west-002.backblazeb2.com/builds/{}".format(build_uid)}}}))
+sns.publish(TopicArn=SNS_DATABASE_TOPIC_ARN, Message=json.dumps({"commands": {build_uid: {"update_build": "https://livestreameditorbuilds234.s3.us-west-002.backblazeb2.com/builds/{}.zip".format(build_uid)}}}))
 
 print("new build id", build_uid)
