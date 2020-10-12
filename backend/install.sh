@@ -92,6 +92,8 @@ sudo systemctl reload nginx
 echo "Frontend zip URL:"
 read frontendFileUrl
 
+frontendFileUrl="https://livestreameditorbuilds234.s3.us-west-002.backblazeb2.com/builds/2c2633e3-65bc-427f-bbbd-3f3d7958ea02.zip"
+
 wget -O build.zip $frontendFileUrl
 unzip -o build.zip
 

@@ -104,6 +104,7 @@ def do_render(vid, uid):
         if not video:
             print("VIDEO ID not found")
             artifact["progress"] = str(-1)
+            artifact["error"] = "Video not found!"
             artifact_table.put_item(Item=artifact)
             updated_artifacts = {}
             updated_artifacts[uid] = artifact
@@ -119,6 +120,7 @@ def do_render(vid, uid):
 
         if not segments:
             artifact["progress"] = str(-1)
+            artifact["error"] = "Segments not found."
             artifact_table.put_item(Item=artifact)
             updated_artifacts = {}
             updated_artifacts[uid] = artifact
@@ -126,7 +128,13 @@ def do_render(vid, uid):
 
             return False
 
+        artifact["substep"] = str(0)
+        artifact_table.put_item(Item=artifact)
+
         print(b2_client.meta.client.download_file(B2_BUCKET, "raws/{}.mp4".format(vid), "./static/raw_files/{}.mp4".format(vid)))
+
+        artifact["substep"] = str(1)
+        artifact_table.put_item(Item=artifact)
 
         if int(video["thumbnail_time"]) > 0:
             ffmpeg_output = grab_frame(vid, "raw_files", video["thumbnail_time"])
@@ -143,6 +151,9 @@ def do_render(vid, uid):
         for segment in segments:
             clips.append(raw_file.subclip(float(segment["start"]), float(segment["end"])))
             contributers.add(users[segment["user_uid"]]["display_name"])
+
+        artifact["substep"] = str(2)
+        artifact_table.put_item(Item=artifact)
 
         clips[-1] = clips[-1].fadeout(2)
         clips[0] = clips[0].fadein(2)
@@ -163,8 +174,14 @@ def do_render(vid, uid):
             clips.append(imclip)
             image_uuid = None
 
+        artifact["substep"] = str(3)
+        artifact_table.put_item(Item=artifact)
+
         output_video = moviepy.editor.concatenate_videoclips(clips)
         output_video.write_videofile("./static/artifacts/{}.mp4".format(uid))
+
+        artifact["substep"] = str(4)
+        artifact_table.put_item(Item=artifact)
 
         for clip in clips:
             clip.close()
@@ -181,6 +198,9 @@ def do_render(vid, uid):
         
         print("S3", b2_client.meta.client.upload_file("./static/artifacts/{}.mp4".format(uid), B2_BUCKET, "artifacts/{}.mp4".format(uid)))
 
+        artifact["substep"] = str(5)
+        artifact_table.put_item(Item=artifact)
+
         raw_filesize = os.stat("./static/artifacts/{}.mp4".format(uid)).st_size
 
         duration = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries",
@@ -194,6 +214,7 @@ def do_render(vid, uid):
         artifact["progress"] = "1"
         artifact["filesize"] = str(raw_filesize)
         artifact["duration"] = str(duration)
+        artifact["substep"] = str(6)
         artifact["description"] = """Streamer: {}
 Link: {}
 Streamed: {}
@@ -208,6 +229,7 @@ If you would like to help out with editing stream highlights, check out https://
         print("FAILED TO EXPORT", e)
         artifact["progress"] = str(-1)
         print(traceback.print_exc())
+        artifact["error"] = str(e)
 
     artifact_table.put_item(Item=artifact)
     updated_artifacts = {}
@@ -275,8 +297,12 @@ def do_video_processing(vid, uid, proxy_width, crf):
 
         video = {}
         video["render_server_name"] = RENDER_SERVER_NAME
+        video_table = dynamodb.Table(DYNAMODB_TABLES["videos"])
 
         try:
+            video["substep"] = str(0)
+            video_table.put_item(Item=video)
+
             os.makedirs("./static/timeline/{}".format(uid), exist_ok=True)
             os.makedirs("./static/timeline_audio/{}".format(uid), exist_ok=True)
 
@@ -284,12 +310,25 @@ def do_video_processing(vid, uid, proxy_width, crf):
             
             print(youtube_dl_output)
             
+            video["substep"] = str(1)
+            video_table.put_item(Item=video)
+
             ffmpeg_output = subprocess.check_output(["ffmpeg", "-i", "./static/raw_files/{}-raw.mp4".format(uid), "-threads", str(MAX_THREADS), "-vcodec", "libx264", "-crf", str(crf), "-preset", "faster", "-profile:v", "main", "./static/raw_files/{}.mp4".format(uid)])
             os.remove("./static/raw_files/{}-raw.mp4".format(uid))
             
+            video["substep"] = str(2)
+            video_table.put_item(Item=video)
+
             ffmpeg_output = subprocess.check_output(["ffmpeg", "-i", "./static/raw_files/{}.mp4".format(uid), "-threads", str(MAX_THREADS), "-vcodec", "libx264", "-crf", "24", "-preset", "veryfast", "-vf", "scale={}:-1".format(proxy_width), "-movflags", "+faststart", "./static/proxy/{}.mp4".format(uid)])
+            
+            video["substep"] = str(3)
+            video_table.put_item(Item=video)
+            
             ffmpeg_output = subprocess.check_output(["ffmpeg", "-i", "./static/proxy/{}.mp4".format(uid), "-r", "1", "-vf", "scale=240:-1", "./static/timeline/{}/%01d.jpg".format(uid)])
             ffmpeg_output = grab_frame(uid, "raw_files", 0)
+
+            video["substep"] = str(4)
+            video_table.put_item(Item=video)
 
             duration = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries",
                                     "format=duration", "-of",
@@ -306,12 +345,18 @@ def do_video_processing(vid, uid, proxy_width, crf):
             with Pool(20) as p:
                 print(p.map(generate_sound_chunk, pool_args))
 
+            video["substep"] = str(5)
+            video_table.put_item(Item=video)
+
             raw_filesize = os.stat("./static/raw_files/{}.mp4".format(uid)).st_size
 
             print("Uploading file")
 
             print("S3", b2_client.meta.client.upload_file("./static/raw_files/{}.mp4".format(uid), B2_BUCKET, "raws/{}.mp4".format(uid)))
             os.remove("./static/raw_files/{}.mp4".format(uid))
+
+            video["substep"] = str(6)
+            video_table.put_item(Item=video)
 
             print("S3", b2_client.meta.client.upload_file("./static/timeline/{}/0.jpg".format(uid), B2_BUCKET, "thumbs/{}.jpg".format(uid)))
 
@@ -328,6 +373,9 @@ def do_video_processing(vid, uid, proxy_width, crf):
 
             print("S3", b2_client.meta.client.upload_file("{}.zip".format(uid), B2_BUCKET, "cold/{}.zip".format(uid)))
 
+            video["substep"] = str(7)
+            video_table.put_item(Item=video)
+
             os.remove("{}.zip".format(uid))
             os.rmdir("./static/timeline/{}".format(uid))
             os.rmdir("./static/timeline_audio/{}".format(uid))
@@ -341,11 +389,13 @@ def do_video_processing(vid, uid, proxy_width, crf):
             video["hot_filesize"] = str(hot_filesize)
             video["filesize"] = str(raw_filesize+cold_filesize)
             video["thumbnail_time"] = str(-1)
+            video["substep"] = str(8)
 
             print("Done processing!")
         except Exception as e:
             print("FAILED downloading", e)
             video["progress"] = str(-1)
+            video["error"] = str(e)
 
         try:
             video_table = dynamodb.Table(DYNAMODB_TABLES["videos"])

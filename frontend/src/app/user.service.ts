@@ -101,6 +101,7 @@ export class UserService {
   public saveServer(server) {
     if (server) {
       environment.apiUrl = `${server.address}/api/v1`;
+      environment.staticUrl = `${server.address}/static`;
       environment.websocket = server.address;
 
       this.socketioService.destroySocketConnection();
