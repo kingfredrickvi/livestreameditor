@@ -1,0 +1,1 @@
+screen -dmS lse ./run.sh
