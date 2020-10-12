@@ -1117,7 +1117,7 @@ def download_assets(force=False):
 
 def sort_videos():
     DYNAMO_DATA["sorted_videos"] = list(DYNAMO_DATA["videos"].values())
-    DYNAMO_DATA["sorted_videos"] = sorted(DYNAMO_DATA["sorted_videos"], key=lambda v: float(v.get("timestamp", 0)), reverse=True)
+    DYNAMO_DATA["sorted_videos"] = sorted(DYNAMO_DATA["videos"], key=lambda v: float(v.get("timestamp", 0)), reverse=True)
 
 def build_database():
     for tk, tv in DYNAMODB_TABLES.items():
@@ -1136,7 +1136,6 @@ def build_database():
         DYNAMO_LOADED[tk] = True
 
     sort_videos()
-
 
     for video in DYNAMO_DATA["videos"].values():
         ensure_video_thumb(video)

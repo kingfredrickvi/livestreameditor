@@ -97,6 +97,10 @@ You can also use an EC2 on AWS but you'll most likely end up paying quite a bit 
 1. Run the script in the backend folder `python sync_database.py`
 1. Refresh the page. You should now be an admin.
 
+### Deploy more endpoints
+
+Great, now you're ready to deploy another endpoint or two. 
+
 ### Setup long running jobs
 
 Only on 1 host, do the following:
