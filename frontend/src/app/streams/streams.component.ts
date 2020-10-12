@@ -25,6 +25,7 @@ export class StreamsComponent implements OnInit {
   constructor(private streamersService: StreamersService, private socketioService: SocketioService, private videosService: VideosService, private router: Router) { }
 
   ngOnInit() {
+    this.staticUrl = environment.staticUrl;
     this.videosService.getStreams().subscribe((data: any) => {
       console.log(data);
 

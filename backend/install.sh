@@ -95,6 +95,7 @@ read frontendFileUrl
 wget -O build.zip $frontendFileUrl
 unzip -o build.zip
 
+sudo rm -rf /dist
 sudo mkdir -p /dist
 sudo mv dist/livestreameditor/* /dist
 rm -rf dist

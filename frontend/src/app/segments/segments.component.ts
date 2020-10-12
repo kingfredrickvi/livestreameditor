@@ -66,6 +66,7 @@ export class SegmentsComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.staticUrl = environment.staticUrl;
   }
 
   ngOnDestroy() {

@@ -99,6 +99,7 @@ export class StreamComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.staticUrl = environment.staticUrl;
     this.videoService.getSegments(this.streamId).subscribe((data: any) => {
       this.segments = data.segments;
       this.sort();
