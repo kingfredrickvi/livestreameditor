@@ -522,7 +522,7 @@ def artifacts():
                 ClientMethod='get_object',
                 Params={
                     'Bucket': Settings.B2_BUCKET,
-                    'Key': "artifacts/{}".format(art["uid"])
+                    'Key': "artifacts/{}.mp4".format(art["uid"])
                 }
             )
 
