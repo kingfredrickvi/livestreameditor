@@ -7,6 +7,7 @@ sudo useradd -m -d /home/lse -s /bin/bash lse
 sudo usermod -aG sudo lse
 sudo mkdir /home/lse/.ssh
 sudo cp ~/.ssh/authorized_keys /home/lse/.ssh
+sudo chown -R lse:lse /home/lse/.ssh
 echo "lse            ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 sudo su - lse
