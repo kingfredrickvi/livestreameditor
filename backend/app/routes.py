@@ -1249,7 +1249,7 @@ def run_database_queue():
                             print(subprocess.check_output(["git", "pull"]))
                             sys.exit(0)
                         elif "update_build" in v1:
-                            print(subprocess.check_output(["./update_frontend.sh", v1["update_build"]]))
+                            print(subprocess.check_output(["bash", "update_frontend.sh", v1["update_build"]]))
                         else:
                             print("Unknown command")
                     elif "deleted" in v1:
