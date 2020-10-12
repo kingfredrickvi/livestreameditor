@@ -19,6 +19,7 @@ cp .env.example .env
 echo "API_BEARER = \"$(openssl rand -base64 30)\"" >> .env
 
 chmod +x run.sh
+chmod +x screen_run.sh
 
 mkdir -p ~/.aws
 
