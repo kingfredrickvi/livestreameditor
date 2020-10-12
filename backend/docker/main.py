@@ -295,9 +295,9 @@ def check_processing():
 def do_video_processing(vid, uid, proxy_width, crf):
         print("Rendering Video", vid, uid)
 
-        video = {}
-        video["render_server_name"] = RENDER_SERVER_NAME
         video_table = dynamodb.Table(DYNAMODB_TABLES["videos"])
+        video = video_table.get_item(Key={'uid': uid})['Item']
+        video["render_server_name"] = RENDER_SERVER_NAME
 
         try:
             video["substep"] = str(0)
@@ -398,16 +398,9 @@ def do_video_processing(vid, uid, proxy_width, crf):
             video["error"] = str(e)
 
         try:
-            video_table = dynamodb.Table(DYNAMODB_TABLES["videos"])
-
-            updated_video = video_table.get_item(Key={'uid': uid})['Item']
-
-            for k,v in video.items():
-                updated_video[k] = v
-
-            video_table.put_item(Item=updated_video)
+            video_table.put_item(Item=video)
             updated_videos = {}
-            updated_videos[uid] = updated_video
+            updated_videos[uid] = video
 
             sns.publish(TopicArn=SNS_DATABASE_TOPIC_ARN, Message=json.dumps({"videos": updated_videos}))
         except Exception as e:

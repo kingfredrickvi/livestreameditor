@@ -88,17 +88,3 @@ sudo cp sub.livestreameditor.nginx.conf /etc/nginx/sites-enabled/
 # sudo chown -R www-data:www-data /dist
 
 sudo systemctl reload nginx
-
-echo "Frontend zip URL:"
-read frontendFileUrl
-
-frontendFileUrl="https://livestreameditorbuilds234.s3.us-west-002.backblazeb2.com/builds/2c2633e3-65bc-427f-bbbd-3f3d7958ea02.zip"
-
-wget -O build.zip $frontendFileUrl
-unzip -o build.zip
-
-sudo rm -rf /dist
-sudo mkdir -p /dist
-sudo mv dist/livestreameditor/* /dist
-rm -rf dist
-sudo chown -R www-data:www-data /dist

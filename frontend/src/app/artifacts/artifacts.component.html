@@ -19,8 +19,11 @@
                     <p>
                         {{ artifact.title }}
                     </p>
-                    <p *ngIf="artifact.progress == 1">
+                    <p *ngIf="artifact.progress == 1 && !artifact.signed_url">
                         <a href="{{staticUrl}}/artifacts/{{artifact.uid}}.mp4" target="_blank">{{staticUrl}}/artifacts/{{artifact.uid}}.mp4</a>
+                    </p>
+                    <p *ngIf="artifact.progress == 1 && artifact.signed_url">
+                        <a href="{{ artifact.signed_url }}" target="_blank">{{ artifact.signed_url }}</a>
                     </p>
                     <p *ngIf="artifact.progress == 0">
                         Processing...

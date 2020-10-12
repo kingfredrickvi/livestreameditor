@@ -15,10 +15,16 @@ from datetime import datetime
 import time
 import zipfile
 import glob
+import sys
 
 SNS_DATABASE_TOPIC_ARN = Settings.SNS_DATABASE_TOPIC_ARN
 DATABASE_QUEUE_NAME = "{}-{}".format(Settings.DATABASE_QUEUE_NAME, Settings.SERVER_ID)
 
+b2_resource = boto3.resource('s3',
+    endpoint_url = Settings.B2_URL,
+    aws_access_key_id = Settings.B2_KEY_ID,
+    aws_secret_access_key = Settings.B2_ACCESS_KEY
+)
 b2_client = boto3.resource('s3',
     endpoint_url = Settings.B2_URL,
     aws_access_key_id = Settings.B2_KEY_ID,
@@ -307,7 +313,7 @@ def add_twitch_video():
 
 def grab_frame(uid, path, second):
     subprocess.check_output(["ffmpeg", "-y", "-ss", str(second), "-i", "./static/{}/{}.mp4".format(path, uid), "-frames:v", "1", "-q:v", "5", "./static/timeline/{}/0.jpg".format(uid)])
-    b2_client.meta.client.upload_file("./static/timeline/{}/0.jpg".format(uid), Settings.B2_BUCKET, "thumbs/{}.jpg".format(uid))
+    b2_resource.meta.client.upload_file("./static/timeline/{}/0.jpg".format(uid), Settings.B2_BUCKET, "thumbs/{}.jpg".format(uid))
     cuid = uuid()
     sns.publish(TopicArn=SNS_DATABASE_TOPIC_ARN, Message=json.dumps({"commands": {cuid: {"thumb": uid}}}))
     return True
@@ -510,6 +516,16 @@ def artifacts():
                     DYNAMO_DATA["streamers"][DYNAMO_DATA["videos"][a["video_uid"]]["streamer_uid"]]["streamer_group"] in client_auth["_streamer_groups"],
                      (DYNAMO_DATA["artifacts"].values())))
 
+    for art in artifacts:
+        if art["progress"] == "1":
+            art["signed_url"] = b2_client.generate_presigned_url(
+                ClientMethod='get_object',
+                Params={
+                    'Bucket': Settings.B2_BUCKET,
+                    'Key': "artifacts/{}".format(art["uid"])
+                }
+            )
+
     return jsonify({
         "artifacts": artifacts
     })
@@ -613,7 +629,7 @@ def warm_video(vid):
         })
 
 def do_warm_video(vid):
-    b2_client.meta.client.download_file(Settings.B2_BUCKET, "cold/{}.zip".format(vid), "./static/cold/{}.zip".format(vid))
+    b2_resource.meta.client.download_file(Settings.B2_BUCKET, "cold/{}.zip".format(vid), "./static/cold/{}.zip".format(vid))
 
     with zipfile.ZipFile("./static/cold/{}.zip".format(vid), 'r') as zipf:
         zipf.extractall(".")
@@ -1100,7 +1116,7 @@ def emit_database_delete(tablename, uid):
 def download_new_thumb(uid):
     print("Downloading thumb", uid)
     os.makedirs("./static/timeline/{}".format(uid), exist_ok=True)
-    b2_client.meta.client.download_file(Settings.B2_BUCKET, "thumbs/{}.jpg".format(uid), "./static/timeline/{}/0.jpg".format(uid))
+    b2_resource.meta.client.download_file(Settings.B2_BUCKET, "thumbs/{}.jpg".format(uid), "./static/timeline/{}/0.jpg".format(uid))
 
 def ensure_video_thumb(video, force=False):
     if video["progress"] == "1" and not os.path.isfile("./static/timeline/{}/0.jpg".format(video["uid"])):
@@ -1114,7 +1130,7 @@ def ensure_video_thumb(video, force=False):
 def download_assets(force=False):
     for filename in FILES_TO_DOWNLOAD:
         if force or not os.path.exists("./static/{}".format(filename)):
-            b2_client.meta.client.download_file(Settings.B2_BUCKET, "assets/{}".format(filename), "./static/{}".format(filename))
+            b2_resource.meta.client.download_file(Settings.B2_BUCKET, "assets/{}".format(filename), "./static/{}".format(filename))
 
 def sort_videos():
     DYNAMO_DATA["sorted_videos"] = list(DYNAMO_DATA["videos"].values())
@@ -1227,6 +1243,13 @@ def run_database_queue():
                             download_new_thumb(v1["thumb"])
                         elif "rebuild" in v1:
                             build_database()
+                        elif "shutdown" in v1:
+                            sys.exit(-1)
+                        elif "restart" in v1:
+                            print(subprocess.check_output(["git", "pull"]))
+                            sys.exit(0)
+                        elif "update_build" in v1:
+                            print(subprocess.check_output(["./update_frontend.sh", v1["update_build"]]))
                         else:
                             print("Unknown command")
                     elif "deleted" in v1:
