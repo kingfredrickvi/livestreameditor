@@ -1243,8 +1243,6 @@ def run_database_queue():
                             download_new_thumb(v1["thumb"])
                         elif "rebuild" in v1:
                             build_database()
-                        elif "shutdown" in v1:
-                            os._exit(-1)
                         elif "restart" in v1:
                             print(subprocess.check_output(["git", "pull"]))
                             os._exit(0)

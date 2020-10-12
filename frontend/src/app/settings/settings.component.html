@@ -13,7 +13,7 @@
                         <label>Media Server</label>
                         <select [(ngModel)]="activeServer" (change)="updateActiveServer()">
                             <ng-container *ngFor="let server of servers">
-                                <option value="{{server.uid}}" *ngIf="+server.active">{{server.uid}}</option>
+                                <option value="{{server.uid}}" *ngIf="+server.active">{{server.uid}} {{server.speed}}</option>
                             </ng-container>
                         </select>
                     </p>
