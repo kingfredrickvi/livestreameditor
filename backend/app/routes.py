@@ -1244,10 +1244,10 @@ def run_database_queue():
                         elif "rebuild" in v1:
                             build_database()
                         elif "shutdown" in v1:
-                            sys._exit(-1)
+                            os._exit(-1)
                         elif "restart" in v1:
                             print(subprocess.check_output(["git", "pull"]))
-                            sys._exit(0)
+                            os._exit(0)
                         elif "update_build" in v1:
                             print(subprocess.check_output(["bash", "update_frontend.sh", v1["update_build"]]))
                         else:

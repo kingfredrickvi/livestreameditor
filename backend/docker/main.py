@@ -128,6 +128,8 @@ def do_render(vid, uid):
 
             return False
 
+        segments = sorted(segments, key=lambda  s: float(s["start"]))
+
         artifact["substep"] = str(0)
         artifact_table.put_item(Item=artifact)
 
