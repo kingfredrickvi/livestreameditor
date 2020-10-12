@@ -1,7 +1,7 @@
 
 sudo apt-get update
-sudo apt-get install -y python3-pip zip awscli wget screen npm nginx ffmpeg unzip
-sudo pip3 install boto3 flask requests flask-socketio awscli
+sudo apt-get install -y python3-pip zip awscli wget screen nginx ffmpeg unzip certbot python-certbot-nginx
+sudo pip3 install boto3 flask requests flask-socketio awscli python-dotenv flask_cors
 
 sudo useradd -m -d /home/lse -s /bin/bash lse
 sudo usermod -aG sudo lse
@@ -16,6 +16,8 @@ git clone https://github.com/kingfredrickvi/livestreameditor.git
 cd livestreameditor/backend
 cp .env.example .env
 
+echo "API_BEARER = \"$(openssl rand -base64 30)\"" >> .env
+
 chmod +x run.sh
 
 mkdir -p ~/.aws
@@ -27,8 +29,8 @@ echo "aws access key:"
 read awsAccessKey
 
 echo "[default]" >> ~/.aws/credentials
-echo "aws_access_key_id $awsKeyId" >> ~/.aws/credentials
-echo "aws_secret_access_key $awsAccessKey" >> ~/.aws/credentials
+echo "aws_access_key_id = $awsKeyId" >> ~/.aws/credentials
+echo "aws_secret_access_key = $awsAccessKey" >> ~/.aws/credentials
 
 echo "aws region:"
 read awsRegion
@@ -78,23 +80,21 @@ sed -i "s/DOMAINA/$serverHostname/g" livestreameditor.nginx.conf
 sed -i "s/DOMAINB/$serverAddress/g" sub.livestreameditor.nginx.conf
 
 sudo cp livestreameditor.nginx.conf /etc/nginx/sites-enabled/
+sudo cp sub.livestreameditor.nginx.conf /etc/nginx/sites-enabled/
 
-screen -dmS lse ./run.sh
-
-cd ../frontend/
-
-sed -i "s/gaswwprjlctyjd4tgvrc49kq6pj6zy/$twitchClientId/" src/environments/environment.prod.ts
-
-sed -i "s/livestreameditor/$serverHostname/" src/environments/environment.prod.ts
-
-wget -O node_modules.zip http://www.mediafire.com/file/87jbtcd3b2cbdot/node_modules.zip/file
-unzip node_modules.zip
-rm node_modules.zip
-
-npm run-script build -- --prod
-
-sudo mkdir -p /dist
-sudo cp -R dist/livestreameditor /dist
-sudo chown -R www-data:www-data /dist
+# sudo mkdir -p /dist
+# sudo cp -R dist/livestreameditor /dist
+# sudo chown -R www-data:www-data /dist
 
 sudo systemctl reload nginx
+
+echo "Frontend zip URL:"
+read frontendFileUrl
+
+wget -O build.zip $frontendFileUrl
+unzip -o build.zip
+
+sudo mkdir -p /dist
+sudo mv dist/livestreameditor/* /dist
+rm -rf dist
+sudo chown -R www-data:www-data /dist

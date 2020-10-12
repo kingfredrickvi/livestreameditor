@@ -66,7 +66,7 @@ for streamer in streamers:
                     add_video = False
                     break
 
-            if False:
+            if add_video:
                 print("POSTING VIDEO")
                 r = requests.post(api_url + "/add_twitch_video", data=json.dumps({
                     "vid": video_id,

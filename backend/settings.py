@@ -6,7 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__)) + "../"
 load_dotenv(join(basedir, '.env'))
 
 class Settings(object):
-    B2_URL = os.environ.get("B2_URL", "")
+    B2_URL = os.environ.get("B2_URL", "https://s3.us-west-002.backblazeb2.com")
     B2_KEY_ID = os.environ.get("B2_KEY_ID", "")
     B2_ACCESS_KEY = os.environ.get("B2_ACCESS_KEY", "")
     SNS_DATABASE_TOPIC_ARN = os.environ.get("SNS_DATABASE_TOPIC_ARN", "arn:aaws:sns:us-east-2:00000000:lse-database")
@@ -16,6 +16,7 @@ class Settings(object):
     API_BEARER = os.environ.get("API_BEARER", "g54ggsg4FRGr5yhfger5hgrgrgf5rh")
 
     B2_BUCKET = os.environ.get("B2_BUCKET", "livestreameditor")
+    B2_BUILDS_BUCKET = os.environ.get("B2_BUILDS_BUCKET", "livestreameditor")
     DOWNLOAD_QUEUE_NAME = os.environ.get("DOWNLOAD_QUEUE_NAME", "lse-download.fifo")
     SERVER_ID = os.environ.get("SERVER_ID", "127-0-0-1")
     SERVER_ACTIVE = os.environ.get("SERVER_ACTIVE", "1")
