@@ -1,6 +1,6 @@
 
 sudo apt-get update
-sudo apt-get install -y python3-pip zip awscli wget screen npm nginx ffmpeg
+sudo apt-get install -y python3-pip zip awscli wget screen npm nginx ffmpeg unzip
 sudo pip3 install boto3 flask requests flask-socketio awscli
 
 sudo useradd -m -d /home/lse -s /bin/bash lse
@@ -13,12 +13,12 @@ sudo su - lse
 
 git clone https://github.com/kingfredrickvi/livestreameditor.git
 
-chmod +x run.sh
-
 cd livestreameditor/backend
 cp .env.example .env
 
-mkdir ~/.aws
+chmod +x run.sh
+
+mkdir -p ~/.aws
 
 echo "aws key id:"
 read awsKeyId
@@ -26,9 +26,9 @@ read awsKeyId
 echo "aws access key:"
 read awsAccessKey
 
-echo "[default]" >> ~/.aws/config
-echo "aws_access_key_id $awsKeyId" >> ~/.aws/config
-echo "aws_secret_access_key $awsAccessKey" >> ~/.aws/config
+echo "[default]" >> ~/.aws/credentials
+echo "aws_access_key_id $awsKeyId" >> ~/.aws/credentials
+echo "aws_secret_access_key $awsAccessKey" >> ~/.aws/credentials
 
 echo "aws region:"
 read awsRegion
@@ -46,10 +46,10 @@ read serverId
 
 echo "SERVER_ID = \"$serverId\"" >> .env
 
-echo "server_address:"
+echo "server_address: (no https://)"
 read serverAddress
 
-echo "SERVER_ADDRESS = \"$serverAddress\"" >> .env
+echo "SERVER_ADDRESS = \"https://$serverAddress\"" >> .env
 
 echo "Twitch client ID:"
 read twitchClientId
@@ -74,19 +74,27 @@ echo "B2_ACCESS_KEY = \"$b2AccessKey\"" >> .env
 echo "hostname (no periods, eg 'livestreameditor'):"
 read serverHostname
 
+sed -i "s/DOMAINA/$serverHostname/g" livestreameditor.nginx.conf
+sed -i "s/DOMAINB/$serverAddress/g" sub.livestreameditor.nginx.conf
+
 sudo cp livestreameditor.nginx.conf /etc/nginx/sites-enabled/
+
+screen -dmS lse ./run.sh
 
 cd ../frontend/
 
-sed -i "s/gaswwprjlctyjd4tgvrc49kq6pj6zy/$twitchClientId" src/environments/environment.prod.ts
+sed -i "s/gaswwprjlctyjd4tgvrc49kq6pj6zy/$twitchClientId/" src/environments/environment.prod.ts
 
-sed -i "s/livestreameditor/$serverHostname" src/environments/environment.prod.ts
+sed -i "s/livestreameditor/$serverHostname/" src/environments/environment.prod.ts
 
-npm install
+wget -O node_modules.zip http://www.mediafire.com/file/87jbtcd3b2cbdot/node_modules.zip/file
+unzip node_modules.zip
+rm node_modules.zip
+
 npm run-script build -- --prod
 
-mkdir -p /dist
-cp -R dist/livestreameditor /dist
+sudo mkdir -p /dist
+sudo cp -R dist/livestreameditor /dist
 sudo chown -R www-data:www-data /dist
 
 sudo systemctl reload nginx

@@ -15,9 +15,9 @@ Deploying this is very complex in order to keep costs as low as possible. What y
 
 * An AWS account http://console.aws.amazon.com/
 * A Backblaze B2 account https://www.backblaze.com/b2/cloud-storage.html
-* A VPS service https://www.vultr.com/
+* A VPS service (I prefer https://www.vultr.com/ )
 * A twitch acccount
-* A domain
+* A domain (I prefer https://domains.google/ )
 
 Add or remove security measures as you see fit (such as IAMs).
 
@@ -59,6 +59,7 @@ You can also use an EC2 on AWS but you'll most likely end up paying quite a bit 
     1. If you want to use the `install.sh` choose ubuntu-18. 
     1. Upload an ssh key if you don't have one uploaded already dummy.
     1. Firewall: port 22 your IP, port 80/443 open to everyone.
+1. Update your domain so that the @ points to the VM's IP and make an additional unique subdomain just for this VM (eg usny1.livestreameditor.com)
 1. SSH into the machine.
 1. `wget https://raw.githubusercontent.com/kingfredrickvi/livestreameditor/main/backend/install.sh`
 1. `chmod +x install.sh && ./install.sh`
@@ -66,3 +67,4 @@ You can also use an EC2 on AWS but you'll most likely end up paying quite a bit 
     1. For aws region, eg `us-east-1` (make sure everything is in same region).
     1. server ID is anything but should be unqiue to that server and be identifiable. The user can see this name. Only use letters and dashes.
     1. The server address is the full domain, eg `https://livestreameditor.com`
+    1. hostname is just the name, eg `livestreameditor`.
