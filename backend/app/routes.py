@@ -15,7 +15,7 @@ from datetime import datetime
 import time
 import zipfile
 import glob
-import sys
+import shutil
 
 SNS_DATABASE_TOPIC_ARN = Settings.SNS_DATABASE_TOPIC_ARN
 DATABASE_QUEUE_NAME = "{}-{}".format(Settings.DATABASE_QUEUE_NAME, Settings.SERVER_ID)
@@ -676,6 +676,27 @@ def cool_video(vid):
             "success": False
         })
 
+@app.route('/api/v1/disk_usage')
+def disk_usage():
+    auth = request.headers.get("Authorization", None)
+
+    if auth is None or auth == "Bearer":
+        return jsonify({
+            "success": False
+        })
+
+    client_auth = get_client_data(auth)
+    if client_auth["_group"] < Group.Editor: return jsonify({"success": False})
+
+    total, used, free = shutil.disk_usage("/")
+
+    return jsonify({
+        "success": True,
+        "total": total,
+        "used": used,
+        "free": free
+    })
+
 def do_cool_video(vid):
     try:
         os.remove("./static/proxy/{}.mp4".format(vid))
@@ -826,6 +847,7 @@ def video(vid):
         "filesize": video.get("filesize", ""),
         "duration": video.get("duration", ""),
         "timestamp": video.get("timestamp", ""),
+        "hot_filesize": video.get("hot_filesize", ""),
         "cold_storage": video.get("cold_storage", ""),
         "generated_artifact": video.get("generated_artifact", "")
     }
@@ -1232,6 +1254,7 @@ def run_database_queue():
         pass
 
     while True:
+        print("Looking for message...")
         for message in database_queue.receive_messages(WaitTimeSeconds=20):
             data = json.loads(json.loads(message.body)["Message"])
             print("DATA", data)
